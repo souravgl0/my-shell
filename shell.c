@@ -50,8 +50,7 @@ int main()
     if(calcpath(Cur_Path,Home_Path)==-1)fprintf(stderr,"Error getting current path : %d",errno);
 
     printf("[%s@%s %s] $ ",Login_Name,Host_Name,Cur_Path);
-
-    if(getline(&Input,&inplen,stdin)==-1){
+    if(getline(&Input,&inplen,stdin)==-1){ // Ctrl-D (EOF) --> Exit Shell
       printf("\n");
       exit(0);
     }
