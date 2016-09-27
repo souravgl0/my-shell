@@ -23,6 +23,6 @@ int runcommand(cmd command)
   else if(execvp(*command.args,command.args)==-1)
   {
     if(errno==2)fprintf(stderr, "%s: Command not found...\n",*command.args);
-    else {fprintf(stderr,"Error : %d\n",errno);}
+    else {perror("Error");}
   }
 }

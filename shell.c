@@ -38,16 +38,16 @@ int main()
   while(getcwd(Cur_Path,buf_size)==NULL)
   {
     if(errno==ERANGE)buf_size*=2;
-    else  {fprintf(stderr, "Error getting current path : %d\n",errno);  break; }
+    else  {perror("Error getting current path");  break; }
   }
   char *Home_Path=(char*)malloc(strlen(Cur_Path)*sizeof(char));
   strcpy(Home_Path,Cur_Path);
 
   do
   {
-    if(gethostname(Host_Name,sizeof(Host_Name))==-1){fprintf(stderr,"Error getting System Name.\n");}
-    if(getlogin_r(Login_Name,sizeof(Login_Name))==-1){fprintf(stderr,"Error getting User Name.\n");}
-    if(calcpath(Cur_Path,Home_Path)==-1)fprintf(stderr,"Error getting current path : %d",errno);
+    if(gethostname(Host_Name,sizeof(Host_Name))==-1){perror("Error getting System Name.");}
+    if(getlogin_r(Login_Name,sizeof(Login_Name))==-1){perror("Error getting User Name.");}
+    if(calcpath(Cur_Path,Home_Path)==-1)perror("Error getting current path");
 
     printf("[%s@%s %s] $ ",Login_Name,Host_Name,Cur_Path);
     if(getline(&Input,&inplen,stdin)==-1){ // Ctrl-D (EOF) --> Exit Shell

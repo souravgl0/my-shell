@@ -21,8 +21,7 @@ int run_cd(cmd command,char Home_Path[])
   }
   if(chdir(path)==-1)
   {
-    if(errno==2)fprintf(stderr,"cd: %s : No such file or directory\n",path);
-    else fprintf(stderr,"Error in changing directory: %d\n",errno);
+    perror("Error in changing directory");
     return -1;
   }
   return 1;

@@ -26,27 +26,27 @@ void process(char Input[],int cmdcount,cmd commands[],char Home_Path[])
     if(out_redirect)
     {
       //restore stdout
-      dup2(orig_stdout,STDOUT_FILENO);
-      close(orig_stdout);
+      if(dup2(orig_stdout,STDOUT_FILENO) == -1){perror("Duplicating File Descriptor Failed");exit(1);}
+      if(close(orig_stdout)==-1){perror("Closing File Descriptor Failed");exit(1);}
       out_redirect = false;
       //change stdin
       orig_stdin=dup(STDIN_FILENO);
-      dup2(fd[0],STDIN_FILENO);
-      close(fd[0]);
+      if(dup2(fd[0],STDIN_FILENO)==-1){perror("Duplicating File Descriptor Failed");exit(1);}
+      if(close(fd[0])==-1){perror("Closing File Descriptor Failed");exit(1);}
       in_redirect = true;
     }
     if(commands[i].pipe)
     {
       //change stdout
-      pipe(fd);
+      if(pipe(fd)==-1){perror("Pipe failed"); exit(1); }
       orig_stdout=dup(STDOUT_FILENO);
-      dup2(fd[1],STDOUT_FILENO);
-      close(fd[1]);
+      if(dup2(fd[1],STDOUT_FILENO)==-1){perror("Duplicating File Descriptor Failed");exit(1);}
+      if(close(fd[1])==-1){perror("Closing File Descriptor Failed");exit(1);}
       out_redirect=true;
     }
 
     pid_t pid=fork();
-    if(pid<0){ fprintf(stderr,"Error: Could Not Fork.\n"); exit(1); }
+    if(pid<0){ perror("Could Not Fork "); exit(1); }
     if(pid==0)
     {
       if(commands[i].bg)  setpgid(0,0);
@@ -66,8 +66,8 @@ void process(char Input[],int cmdcount,cmd commands[],char Home_Path[])
     if(in_redirect)
     {
       // restore stdin
-      dup2(orig_stdin,STDIN_FILENO);
-      close(orig_stdin);
+      if(dup2(orig_stdin,STDIN_FILENO)==-1){perror("Duplicating File Descriptor Failed");exit(1);}
+      if(close(orig_stdin)==-1){perror("Closing File Descriptor Failed");exit(1);}
       in_redirect = false;
     }
 
