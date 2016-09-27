@@ -3,17 +3,23 @@
 #include<stdio.h>
 #include "struct.h"
 
+typedef enum { arg, infile, outfile} useof;
+
 void initCommand(cmd * command)
 {
   command->args=(char**)malloc(10*sizeof(char*));
   command->bg=false;
   command->pipe=false;
+  command->outredirect=false;
+  command->inredirect=false;
 }
+
 void parse(char * line,int *cmdcount,cmd commands[])
 {
   initCommand(commands);
   int argind=0;
   bool next=true,end=false;
+  useof nextword = arg;
   *cmdcount=1;
 
   while(*line != '\0')
@@ -37,6 +43,14 @@ void parse(char * line,int *cmdcount,cmd commands[])
         initCommand(commands);
         argind=0;
       }
+      else if(*line=='>'){
+        commands->outredirect=true;
+        nextword=outfile;
+      }
+      else if(*line=='<'){
+        commands->inredirect=true;
+        nextword=infile;
+      }
       else if(*line=='\0'){end=true;break;}
       else break;
 
@@ -49,8 +63,18 @@ void parse(char * line,int *cmdcount,cmd commands[])
     if(next)
     {
       next=false;
-      *(commands->args + argind)=line;
-      argind++;
+      if(nextword==arg){
+        *(commands->args + argind)=line;
+        argind++;
+      }
+      else if(nextword==infile){
+        commands->infile=line;
+        nextword=arg;
+      }
+      else if(nextword==outfile){
+        commands->outfile=line;
+        nextword=arg;
+      }
     }
     line++;
   }

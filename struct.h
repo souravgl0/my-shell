@@ -8,6 +8,10 @@ typedef struct cmd
   char **args;
   bool bg;
   bool pipe;
+  bool outredirect;
+  bool inredirect;
+  char * infile;
+  char * outfile;
 }cmd;
 
 #endif
