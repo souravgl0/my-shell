@@ -12,6 +12,24 @@
 #include "struct.h"
 #include "run.h"
 #include "process.h"
+#include "plist.h"
+
+extern running_jobs *rjobs;
+
+void childHandler(int signum)
+{
+    pid_t childpid;
+    int status;
+    while ((childpid = waitpid( -1, &status, WNOHANG)) > 0)
+    {
+      delete_job(childpid);
+      if (WIFEXITED(status))
+          printf("Program with pid %d exited naturally\n",childpid);
+      if (WIFSIGNALED(status))
+          printf("Program with pid %d exited because of a signal\n",childpid);
+    }
+	return;
+}
 
 void process(char Input[],int cmdcount,cmd commands[],char Home_Path[])
 {
@@ -21,8 +39,9 @@ void process(char Input[],int cmdcount,cmd commands[],char Home_Path[])
   {
     if(!*(commands[i].args))continue;
 
-    // cd need to be dealt in parent process
+    //-------Processed need to be dealt in parent process--------
     if(strcmp(*commands[i].args,"cd")==0){run_cd(commands[i],Home_Path);continue;}
+    if(strcmp(*commands[i].args,"quit")==0){exit(0);}
 
     //----------- Handling Piping-----------
     if(pipe_out)
@@ -65,6 +84,7 @@ void process(char Input[],int cmdcount,cmd commands[],char Home_Path[])
       out_redirect=true;
     }
     //---------- Fork and Run Child Process
+
     pid_t pid=fork();
     if(pid<0){perror("Could Not Fork ");return;}
     if(pid==0)
@@ -80,7 +100,9 @@ void process(char Input[],int cmdcount,cmd commands[],char Home_Path[])
     }
     else
     {
+      add_job(pid,*commands[i].args);
       printf("%s : Started with pid %d\n",*commands[i].args,pid);
+		  signal(SIGCHLD, childHandler);
     }
 
     //----------- Restoring Stdout and Stdin after Piping
