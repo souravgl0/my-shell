@@ -1,6 +1,8 @@
 #ifndef plist_h
 #define plist_h
 
+#include<sys/types.h>
+
 typedef struct running_jobs
 {
   char jobName[100];

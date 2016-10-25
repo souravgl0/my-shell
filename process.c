@@ -7,11 +7,9 @@
 #include<string.h>
 #include<fcntl.h>
 
-#include "parse.h"
 #include "cd.h"
 #include "struct.h"
 #include "run.h"
-#include "process.h"
 #include "plist.h"
 
 extern running_jobs *rjobs;

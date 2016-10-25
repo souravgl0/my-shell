@@ -5,7 +5,6 @@
 #include<signal.h>
 
 #include "struct.h"
-#include "cd.h"
 #include "plist.h"
 
 extern running_jobs *rjobs;

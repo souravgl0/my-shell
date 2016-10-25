@@ -7,11 +7,7 @@
 #include<sys/wait.h>
 
 #include "parse.h"
-#include "cd.h"
-#include "struct.h"
-#include "run.h"
 #include "process.h"
-#include "plist.h"
 
 int calcpath(char Cur_Path[],char Home_Path[])
 {
